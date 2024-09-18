@@ -1,7 +1,10 @@
+import { Teams } from 'src/teams/teams.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   Timestamp,
   UpdateDateColumn,
@@ -23,6 +26,10 @@ export class Employee {
 
   @Column()
   emp_mail: string;
+
+  @ManyToMany(() => Teams, (teams) => teams.members)
+  @JoinTable({ name: 'employee_teams' })
+  teams: Teams[];
 
   @CreateDateColumn()
   created_at: Timestamp;

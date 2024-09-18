@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from './employee.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { hash } from 'bcrypt';
 
 @Injectable()
@@ -33,6 +33,7 @@ export class EmployeeService {
     return createdEmployee;
   }
 
+  //TODO -> write proper route
   async getallemp() {
     return await this.employeeRepo.find();
   }
@@ -42,5 +43,14 @@ export class EmployeeService {
       emp_login_id: empLoginId,
     });
     return employeeDetails;
+  }
+
+  async getAllEmployeesById(empIds: string[]): Promise<Employee[]> {
+    const employeeArray = await this.employeeRepo.findBy({
+      emp_id: In(empIds),
+    });
+    if (employeeArray.length !== empIds.length)
+      throw new BadRequestException('One or more Employee Id is not found');
+    return employeeArray;
   }
 }
