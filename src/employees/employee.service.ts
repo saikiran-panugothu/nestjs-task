@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from './employee.entity';
 import { In, Repository } from 'typeorm';
 import { hash } from 'bcrypt';
+import { UpdateEmployeeDto } from './dto/update-employee.dto';
 
 @Injectable()
 export class EmployeeService {
@@ -33,6 +34,31 @@ export class EmployeeService {
     return createdEmployee;
   }
 
+  async updateEmployeeDetails(
+    empId: string,
+    updateEmployeeDto: UpdateEmployeeDto,
+  ) {
+    const employee = await this.employeeRepo.findOne({
+      where: { emp_id: empId },
+    });
+    if (updateEmployeeDto.empName) {
+      employee.emp_name = updateEmployeeDto.empName;
+    }
+    if (updateEmployeeDto.empMail) {
+      employee.emp_mail = updateEmployeeDto.empMail;
+    }
+    if (updateEmployeeDto.empLoginId) {
+      throw new BadRequestException('LoginId cannot be updated');
+    }
+    if (updateEmployeeDto.empPassword) {
+      const hashedPassword = await hash(updateEmployeeDto.empPassword, 10);
+      employee.emp_password = hashedPassword;
+    }
+    Object.assign(employee, updateEmployeeDto);
+    await this.employeeRepo.save(employee);
+    return { status: HttpStatus.OK, message: 'Employee updated Successfully' };
+  }
+
   async getEmployeeFullDetails(empId: string) {
     return await this.employeeRepo.findOne({
       where: { emp_id: empId },
@@ -55,6 +81,7 @@ export class EmployeeService {
       },
     });
   }
+
   async getAllEmployees() {
     return await this.employeeRepo.find();
   }
