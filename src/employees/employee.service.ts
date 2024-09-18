@@ -33,9 +33,37 @@ export class EmployeeService {
     return createdEmployee;
   }
 
-  //TODO -> write proper route
-  async getallemp() {
+  async getEmployeeFullDetails(empId: string) {
+    return await this.employeeRepo.findOne({
+      where: { emp_id: empId },
+      relations: ['teams', 'assigned_tasks'],
+      select: {
+        emp_id: true,
+        emp_name: true,
+        emp_login_id: true,
+        emp_mail: true,
+        teams: {
+          team_id: true,
+          team_name: true,
+        },
+        assigned_tasks: {
+          task_id: true,
+          description: true,
+          status: true,
+          due_date: true,
+        },
+      },
+    });
+  }
+  async getAllEmployees() {
     return await this.employeeRepo.find();
+  }
+
+  async getEmployeeById(employeeId: string): Promise<Employee> {
+    return await this.employeeRepo.findOne({
+      where: { emp_id: employeeId },
+      relations: ['teams'],
+    });
   }
 
   async getEmployeeByLoginId(empLoginId: string): Promise<Employee> | null {

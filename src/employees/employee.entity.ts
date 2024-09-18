@@ -1,3 +1,4 @@
+import { Tasks } from 'src/tasks/tasks.entity';
 import { Teams } from 'src/teams/teams.entity';
 import {
   Column,
@@ -5,6 +6,7 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   Timestamp,
   UpdateDateColumn,
@@ -30,6 +32,12 @@ export class Employee {
   @ManyToMany(() => Teams, (teams) => teams.members)
   @JoinTable({ name: 'employee_teams' })
   teams: Teams[];
+
+  @OneToMany(() => Tasks, (tasks) => tasks.assignee)
+  assigned_tasks: Tasks[];
+
+  @OneToMany(() => Tasks, (tasks) => tasks.assignor)
+  created_tasks: Tasks[];
 
   @CreateDateColumn()
   created_at: Timestamp;

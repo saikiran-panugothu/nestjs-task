@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Teams } from './teams.entity';
 import { Repository } from 'typeorm';
 import { EmployeeService } from 'src/employees/employee.service';
-import { ResponseMessageDto } from 'src/common/response-message.dto';
+import { ResponseMessageDto } from 'src/common/dto/response-message.dto';
 import { UserDetails } from 'src/auth/dto/token-details.dto';
 
 @Injectable()
